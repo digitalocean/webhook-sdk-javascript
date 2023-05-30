@@ -10,7 +10,7 @@ export const DEFAULT_SIGNATURE_TOLERANCE = 300; // seconds (5mins)
  */
 export interface CreateSignatureOptions {
   /**
-   * Unix timestamp in ms
+   * Unix timestamp in seconds
    */
   timestamp: number,
 
@@ -43,7 +43,7 @@ export interface VerifySignatureOptions {
   ignoreTolerance?: boolean
 
   /**
-   * Optional override of Date.now
+   * Optional override of a function that returns the current timestamp as seconds
    */
   now?: () => number,
 
@@ -142,12 +142,12 @@ export class Signature {
    * @memberof Signature
    */
   verify(payload: Buffer, secret: string, opts?: VerifySignatureOptions) {
-    const now = opts?.now ? opts.now() : Date.now();
+    const now = opts?.now ? opts.now() : Date.now() / 1000;
     const tolerance = opts?.tolerance ?? DEFAULT_SIGNATURE_TOLERANCE
     const untrustedSchemes = opts?.untrustedSchemes ?? []
 
     if (!opts?.ignoreTolerance) {
-      if ((now - this.timestamp) > (tolerance * 1000)) {
+      if ((now - this.timestamp) > tolerance ) {
         throw new Error('signature has expired')
       }
     }
