@@ -18,6 +18,8 @@ yarn add @digitalocean/webhook-sdk
 
 Use `Signature.parse` and `signature.verify` to verify an incoming webhook payload request.
 
+**Important:** Make sure to pass the body of the request to `signature.verify` **raw** without formatting it to avoid slight mismatches and thus failures to verify the signature. By default, your HTTP server might parse the incoming JSON and provide an object in the body. The example below uses `express.raw` specifically to prevent that.
+
 ```js
 const { Signature, HTTPHeaderSignature } = require('@digitalocean/webhook-sdk')
 const express = require('express');
